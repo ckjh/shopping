@@ -24,7 +24,7 @@ SECRET_KEY = 'yczj!)40rp*ble+@d#&##xh02(&d=85+)4^j6c@nq(cjbb%z9d'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'user',
     'goods',
-    # 'djcelery',
     'cart',
     'rest_framework.authtoken',
     'order'
