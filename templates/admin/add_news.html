@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>后台管理</title>
+    <link rel="stylesheet" type="text/css" href="../../static/admin/css/reset.css">
+    <link rel="stylesheet" type="text/css" href="../../static/admin/css/main.css">
+    <script type="text/javascript" src="../../static/admin/js/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript" src="../../static/admin/tinymce/js/tinymce/tinymce.min.js"></script>
+    <script src="../../static/admin/js/tinymce_setup.js"></script>
+</head>
+<body>
+<div class="breadcrub">
+    当前位置：新闻管理>新闻快讯
+</div>
+<div class="pannel">
+    <form id="form01" enctype="multipart/form-data">
+        <div class="news_review">
+
+            <h3 class="review_title">添加新闻快</h3>
+
+            <div class="form_group">
+                <label>名称：</label>
+                <input type="text" class="cate_name" name="title" width=100">
+            </div>
+            <div class="form_group">
+                <label>是否推荐到首页:</label>
+                <label>是：<input name="is_recommend" type="radio" class="is_recommend" value="0" width=30></label>
+                &nbsp&nbsp
+                <label>否：<input name="is_recommend" type="radio" class="is_recommend" value="1" width=30></label>
+                &nbsp&nbsp
+            </div>
+
+            <div class="form_group">
+                <label>正文：</label>
+                <input type="text" class="content" name="content" width=100 id="rich_content">
+            </div>
+
+
+            {#            <div class="form_group">#}
+            {#                <label>图片分类：</label>#}
+            {#                <input type="file" name="pic" class="cate_img" width="100">#}
+            {#            </div>#}
+
+            <div class="form_group indent_group line_top">
+                <input type="button" value="确定" class="confirm" onclick="addcate()">
+                <input type="button" value="取消" class="cancel" onclick="cancel()">
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+<script>
+    function addcate() {
+        var content = tinyMCE.activeEditor.getContent();
+        var myform = $('#form01').serialize();//表单序列
+        myform += encodeURIComponent(content);
+        {#var myForm = "&" + $('#myid').serialize();//方法2：拼接上需要的字符串#}
+        {#alert(myform);#}
+        {#alert(content);#}
+        $.ajax({
+            url: '/sadmin/getAddNews/',
+            type: 'post',
+            dataType: 'json',
+            data: myform,
+            success: function (res) {
+                console.log(res);
+                if (res.code == 200) {
+                    window.location.href = '/sadmin/news_list/'
+                }
+
+            }
+        })
+    }
+</script>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>后台管理</title>
+    <link rel="stylesheet" type="text/css" href="../../static/admin/css/reset.css">
+    <link rel="stylesheet" type="text/css" href="../../static/admin/css/main.css">
+    <script type="text/javascript" src="../../static/admin/js/jquery-1.12.4.min.js"></script>
+</head>
+<body>
+<div class="breadcrub">
+    当前位置：新闻管理>添加分类
+</div>
+<div class="pannel">
+    <form id="form01" enctype="multipart/form-data">
+        <div class="news_review">
+
+            <h3 class="review_title">添加分类</h3>
+
+            <div class="form_group">
+                <label>名称：</label>
+                <input type="text" class="cate_name" name="name" width=100>
+            </div>
+
+
+            <div class="form_group">
+                <label>上级分类：</label>
+                <select class="p_cate" name="pid">
+                    <option value="0">顶级分类</option>
+
+                    {% for cate in cate_list %}
+                        <option value="{{ cate.id }}">{{ cate.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form_group">
+                <label>是否推荐到首页:</label>
+                <label>是：<input name="is_recommend" type="radio" class="is_recommend" value="1" width=30></label>
+                &nbsp&nbsp
+                <label>否：<input name="is_recommend" type="radio" class="is_recommend" value="0" width=30></label>
+                &nbsp&nbsp
+            </div>
+            <div class="form_group">
+                <label>分类图片：</label>
+                <input type="file" name="pic" class="cate_img" width="100" value="123.jpg">
+            </div>
+
+            <div class="form_group indent_group line_top">
+                <input type="button" value="确定" class="confirm" onclick="addcate()">
+                <input type="button" value="取消" class="cancel" onclick="cancel()">
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+<script>
+    function addcate() {
+        $.ajax({
+            url: '/sadmin/cate',
+            type: 'post',
+            cache: false,
+            dataType: 'json',
+            processData: false,
+            contentType: false,
+            data: new FormData($("#form01")[0]),
+            {#data:$('form').serialize(),#}
+            success: function (res) {
+                console.log(res);
+                if (res.code == 200) {
+                    window.location.href = '/sadmin/catelist/'
+
+                }
+            }
+        })
+    }
+</script>
+</html>

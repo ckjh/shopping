@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>后台管理</title>
+    <link rel="stylesheet" type="text/css" href="../../static/admin/css/reset.css">
+    <link rel="stylesheet" type="text/css" href="../../static/admin/css/main.css">
+    <script type="text/javascript" src="../../static/admin/js/jquery-1.12.4.min.js"></script>
+</head>
+<body>
+<div class="header">
+    {#    <a href="#" class="logo fl"><img src="../../static/admin/images/logo.png" alt="logo"></a>#}
+    <a href="" onclick="logout()" class="logout fr">退 出</a>
+</div>
+
+<div class="side_bar">
+    <div class="user_info">
+        <img src="../../static/admin/images/person.png" alt="张大山">
+        <p>欢迎你 <em>{{ user.username }}</em></p>
+    </div>
+
+    <div class="menu_con">
+        <div class="first_menu active"><a href="#" class="icon01">用户管理</a></div>
+        <ul class="sub_menu show">
+            <li><a class="icon022" href="/sadmin/user_count" target="main_frame">用户统计</a></li>
+            <li class="current"><a href="/sadmin/userList/" class="icon021" target="main_frame">用户列表</a></li>
+            <li class="current"><a href="/sadmin/roleList/" class="icon021" target="main_frame">角色列表</a></li>
+            <li class="current"><a href="/sadmin/resourseList/" class="icon021" target="main_frame">资源列表</a></li>
+        </ul>
+        <div class="first_menu"><a href="#" class="icon02">管理</a></div>
+        <ul class="sub_menu">
+            <li><a href="/sadmin/catelist/" class="icon034" target="main_frame">分类管理</a></li>
+            <li><a href="/sadmin/news_list/" class="icon031" target="main_frame">新闻管理</a></li>
+            <li><a href="/sadmin/showTag/" class="icon034" target="main_frame">标签管理</a></li>
+            <li><a href="/sadmin/showBanner/" class="icon034" target="main_frame">焦点图管理</a></li>
+            <li><a href="/sadmin/showGoods/" class="icon034" target="main_frame">商品管理</a></li>
+        </ul>
+        <div class="first_menu"><a href="#" class="icon02">实验</a></div>
+        <ul class="sub_menu" id="resource">
+            {% for resource in resource_list %}
+                <li><a href="/sadmin/{{ resource.url }}/" class="icon034" target="main_frame">{{ resource.name }}</a>
+                </li>
+            {% endfor %}
+
+
+        </ul>
+    </div>
+</div>
+
+<div class="main_body" id="main_body">
+    <iframe src="/sadmin/user_count" frameborder="0" id="main_frame" name="main_frame" frameborder="0"
+            scrolling="auto"></iframe>
+</div>
+
+<script>
+
+    $(function () {
+        $('.first_menu').click(function () {
+            $(this).addClass('active').siblings('.first_menu').removeClass('active');
+            $(this).next().slideDown().siblings('.sub_menu').slideUp();
+        });
+        var frame_w = $('#main_body').outerWidth();
+        var frame_h = $('#main_body').outerHeight();
+        $('#main_frame').css({'width': frame_w, 'height': frame_h});
+    });
+    websocket_conn();
+
+    function websocket_conn() {
+        var name = 'root';
+        var socket = new WebSocket('ws://127.0.0.1:8000/order/finish_order/' + name);
+
+        socket.onopen = function () {
+            console.log('WebSocket open');//成功连接上Websocket
+        };
+        socket.onmessage = function (e) {
+            alert('消息提醒: ' + e.data);//打印服务端返回的数据
+        };
+        socket.onclose = function (e) {
+            console.log(e);
+            socket.close(); //关闭TCP连接
+        };
+    }
+
+
+</script>
+
+</body>
+</html>

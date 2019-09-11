@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>后台管理</title>
+    <link rel="stylesheet" type="text/css" href="../../static/admin/css/reset.css">
+    <link rel="stylesheet" type="text/css" href="../../static/admin/css/main.css">
+    <link rel="stylesheet" type="text/css" href='../../static/admin/css/jquery.pagination.css'>
+    <script type="text/javascript" src="../../static/admin/js/jquery-1.12.4.min.js"></script>
+    <script src="../../static/admin/js/jquery.pagination.min.js"></script>
+
+</head>
+<body>
+<div class="breadcrub">
+    当前位置：产品管理>新闻管理>
+</div>
+<div class="pannel">
+    <table class="common_table">
+
+    </table>
+
+    <form id="form01" enctype="multipart/form-data">
+        <table class="common">
+
+        </table>
+    </form>
+</div>
+<div id="pagination">
+
+</div>
+</body>
+<script>
+    {#获取分类页内容#}
+    getCateList();
+
+    function getCateList() {
+        $.ajax({
+            url: '/sadmin/newsList/',
+            type: 'get',
+            dataType: 'json',
+            success: function (res) {
+                if (res.code === 200) {
+                    var mes = res.news_list;
+                    var len = mes.length;
+                    var html = '        <tr>\n' +
+                        '            <td colspan="5"><a href="/sadmin/addNews/" class="addtype">增加新闻</a></td>\n' +
+                        '\n' +
+                        '        </tr>\n' +
+                        '        <tr>\n' +
+                        '            <th width="10%">id</th>\n' +
+                        '            <th width="20%">标题</th>\n' +
+                        '            <th width="10%">是否推荐到首页</th>\n' +
+                        '            <th width="30%">内容</th>\n' +
+                        '            <th width="30%">操作</th>\n' +
+                        '        </tr>';
+                    for (var i = 0; i < len; i++) {
+                        if (mes[i]['is_recommend'] == 0) {
+                            var m = '是'
+                        } else {
+                            var m = '否'
+                        }
+                        ;
+                        html += ' <tr><td width="10%">' + mes[i]['id'] + '</td><td width="20%">' + mes[i]['title'] + '</td>' + '</td><td width="10%">' + m + '</td><td width="60%">' + mes[i]['content'] +
+                            '<td width="20%"><input type="button" value="修改" class="confirm" onclick="edit(' + mes[i]['id'] + ')">&nbsp<input type="button" value="删除" class="confirm" onclick="Delete(' + mes[i]['id'] + ')"></td></tr>'
+                    }
+                    $('.common_table').html(html)
+                }
+            }
+        })
+
+    }
+
+
+    function Delete(id) {
+        {#console.log(id);#}
+        if (id) {
+            console.log(id);
+            $.ajax({
+                url: '/sadmin/deleteNews/',
+                type: 'post',
+                dataType: 'json',
+                data: {'id': id},
+                success: function (res) {
+                    console.log(res);
+                    window.location.reload()
+                }
+            })
+        }
+    }
+
+
+    function edit(id) {
+        console.log(id);
+        $.ajax({
+            url: '/sadmin/editNews/',
+            type: 'get',
+            dataType: 'json',
+            data: {'id': id},
+            success: function (res) {
+                console.log(res);
+
+                var html = '</div>\n' +
+                    '<div class="pannel">\n' +
+
+                    '        <div class="news_review">\n' +
+                    '\n' +
+                    '            <h3 class="review_title">修改ID为 ' + res['news']['id'] + '的标签</h3>\n' +
+                    '\n' +
+                    '            <div class="form_group">\n' +
+                    '                <h3 class="review_title">填写新标题:\n' +
+                    '                <input type="text" class="cate_name" name="id" value="' + res['news']['id'] + '" width=100 hidden>\n' +
+                    '                <input type="text" class="cate_name" name="title" value="' + res['news']['title'] + '" width=100></h3>\n' +
+                    '            </div>\n';
+
+
+                ;
+                if (res['news']['is_recommend'] == 0) {
+                    var m = '是'
+                } else {
+                    var m = '否'
+                }
+                ;
+
+                html +=
+                    '            <div class="form_group">\n' +
+                    '                <h3>是否推荐到首页:已选' + m + '  <h3>是：<input name="is_recommend" type="radio" class="is_recommend" value="0" width=30></h3>\n' +
+                    '                \n' +
+                    '                </h3>否：<input name="is_recommend" type="radio" class="is_recommend" value="1" width=30></h3>\n' +
+                    '                </h3>\n' +
+                    '            </div>\n' +
+                    '            <div class="form_group">\n' +
+                    '                <h3 class="review_title">编辑内容:\n' +
+                    '             <input type="text" class="content" name="content" width=100 id="rich_content" value="' + res['news']['content'] + '">' +
+                    {#'                <input type="text" class="cate_name" name="content" value="' + res['news']['content'] + '" width=100></h3>\n' +#}
+                    '            </div>\n' +
+                    '            <div class="form_group indent_group line_top">\n' +
+                    '                <input type="button" value="确定" class="confirm" onclick="ok()">\n' +
+                    '            </div>\n' +
+                    '        </div>\n' +
+
+                    '</div>';
+                $('.common').html(html)
+            }
+        });
+    }
+
+    function ok() {
+        $.ajax({
+            url: '/sadmin/editNews/',
+            type: 'post',
+            cache: false,
+            dataType: 'json',
+            processData: false,
+            contentType: false,
+            data: new FormData($("#form01")[0]),
+
+            success: function (res) {
+                console.log(res);
+                console.log(FormData);
+                if (res.code == 200) {
+                    window.location.reload()
+                }
+
+            }
+        })
+    }
+</script>
+</html>

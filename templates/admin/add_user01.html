@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>后台管理</title>
+    <link rel="stylesheet" type="text/css" href="../../static/admin/css/reset.css">
+    <link rel="stylesheet" type="text/css" href="../../static/admin/css/main.css">
+    <script type="text/javascript" src="../../static/admin/js/jquery-1.12.4.min.js"></script>
+</head>
+<body>
+<div class="breadcrub">
+    当前位置：新闻管理>添加分类
+</div>
+<div class="pannel">
+    <form id="form01" enctype="multipart/form-data">
+        <div class="news_review">
+
+            <h3 class="review_title">添加用户</h3>
+
+            <div class="form_group">
+                <label>名称：</label>
+                <input type="text" class="cate_name" name="username" width=100 value="{{ user.name }}">
+            </div>
+            <div class="form_group">
+                <label>密码：</label>
+                <input type="password" class="cate_name" name="password" width=100 value="{{ user.password }}">
+            </div>
+
+
+            <div class="form_group">
+                <label>角色：</label>
+                <select class="p_cate" name="role_id">
+                    {% for cate in role_list %}
+                        <option value="{{ user.role_id.id }}">{{ user.role_id.name }}</option>
+                        <option value="{{ cate.id }}">{{ cate.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form_group">
+                <label>是否为管理员:</label>
+                {% if user.is_admin == 0 %}
+                    (已选否)
+                {% elif user.is_admin == 1 %}
+                    (已选是)
+                {% endif %}
+                <label>是：<input name="is_admin" type="radio" class="is_admin" value="1" width=30></label>
+                &nbsp&nbsp
+                <label>否：<input name="is_admin" type="radio" class="is_admin" value="0" width=30></label>
+                &nbsp&nbsp
+            </div>
+            {#            <div class="form_group">#}
+            {#                <label>图片分类：</label>#}
+            {#                <input type="file" name="pic" class="cate_img" width="100">#}
+            {#            </div>#}
+
+            <div class="form_group indent_group line_top">
+                <input type="button" value="确定" class="confirm" onclick="addcate()">
+                <input type="button" value="取消" class="cancel" onclick="cancel()">
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+<script>
+    function addcate() {
+        $.ajax({
+            url: '/sadmin/addUser/',
+            type: 'post',
+            cache: false,
+            dataType: 'json',
+            processData: false,
+            contentType: false,
+            data: new FormData($("#form01")[0]),
+            success: function (res) {
+                console.log(res);
+                if (res.code == 200) {
+                    window.location.href = '/sadmin/userList/'
+                }
+
+            }
+        })
+    }
+</script>
+</html>

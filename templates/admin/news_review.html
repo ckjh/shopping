@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>新经资讯后台管理</title>
+	<link rel="stylesheet" type="text/css" href="../../static/admin/css/reset.css">
+	<link rel="stylesheet" type="text/css" href="../../static/admin/css/main.css">
+	<link rel="stylesheet" href="../../static/admin/css/jquery.pagination.css">
+	<script type="text/javascript" src="../../static/admin/js/jquery-1.12.4.min.js"></script>
+	<script type="text/javascript" src="../../static/admin/js/jquery.pagination.min.js"></script>
+</head>
+<body>
+	<div class="breadcrub" >
+			当前位置：新闻管理>新闻审核
+			<form  class="news_filter_form">
+				<input type="text" placeholder="请输入关键字" class="input_txt" name="keyword" value="{{keyword}}">
+				<input type="submit" value="搜 索" class="input_sub">
+			</form>
+		</div>
+		<div class="pannel">
+			<table class="common_table">
+					<tr>
+							<th width="3%">id</th>
+							<th width="50%">标题</th>
+							<th width="15%">发布时间</th>
+							<th width="5%">状态</th>
+							<th width="5%">失败原因</th>
+							<th width="8%">管理操作</th>
+						</tr>
+						{% for i in newslist %}
+						<tr>
+							<td width="3%">{{i.id}}</td>
+							<td width="50%">{{i.title}}</td>
+							<td width="15%">{{i.create_time}}</td>
+							<td width="5%">
+								{% if i.status == 1%}
+								通过 
+								 {% elif i.status== 2 %}
+								 未通过 
+								  {% else %}
+								  审核中
+								{% endif %}</td>
+							<td width="5%">{{i.reason}}</td>
+							<td width="8%">
+								{% if i.status != 1%}
+								<a href="/admin/review_detail?id={{i.id}}">审核</a>
+								{% endif %}
+								删除
+							</td>
+						</tr>
+						{% endfor %}
+			</table>
+			<div id='pagination'></div>
+		</div>
+		
+</body>
+<script>
+$(function(){
+	$("#pagination").pagination({
+		totalPage:{{tpage}},
+		currentPage:{{cpage}},
+		callback:function(current){
+			var keyword = $(".input_txt").val()
+			window.location.href='/admin/newsreview?p='+current+"&keyword="+keyword
+		}
+	})
+})
+</script>
+</html>

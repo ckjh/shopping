@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>后台管理</title>
+    <link rel="stylesheet" type="text/css" href="../../static/admin/css/reset.css">
+    <link rel="stylesheet" type="text/css" href="../../static/admin/css/main.css">
+    <link rel="stylesheet" type="text/css" href='../../static/admin/css/jquery.pagination.css'>
+    <script type="text/javascript" src="../../static/admin/js/jquery-1.12.4.min.js"></script>
+    <script src="../../static/admin/js/jquery.pagination.min.js"></script>
+
+</head>
+<body>
+<div class="breadcrub">
+    当前位置：产品管理>商品表
+</div>
+<div class="pannel">
+    <table class="common_table">
+        {#        <tr>#}
+        {#            <td colspan="5"><a href="/sadmin/addCate" class="addtype">增加分类</a></td>#}
+        {#        </tr>#}
+        {#        <tr>#}
+        {#            <th width="20%">id</th>#}
+        {#            <th width="20%">类别名称</th>#}
+        {#            <th width="20%">是否推荐到首页</th>#}
+        {#            <th width="40%" colspan="2">管理操作</th>#}
+        {#        </tr>#}
+        {#        {% for cate in cate_list %}#}
+        {#            <tr>#}
+        {##}
+        {#                <th width="20%">{{ cate.id }}</th>#}
+        {#                <th width="20%">{{ cate.name }}</th>#}
+        {#                <th width="20%">{% if cate.is_recommend == 0 %}#}
+        {#                    否#}
+        {#                {% else %}#}
+        {#                    是#}
+        {#                {% endif %}</th>#}
+        {#                <th width="20%"><a href="#">删除</a></th>#}
+        {#                <th width="20%"><a href="#">修改</a></th>#}
+        {#            </tr>#}
+        {#        {% endfor %}#}
+    </table>
+</div>
+<div id="pagination">
+
+</div>
+</body>
+<script>
+    {#获取分类页内容#}
+    getGoodsList();
+
+    function getGoodsList() {
+        $.ajax({
+            url: '/sadmin/goodsList/',
+            type: 'get',
+            dataType: 'json',
+            success: function (res) {
+                if (res.code == 200) {
+                    var mes = res.goods_list;
+                    var len = mes.length;
+                    var html = '        <tr>\n' +
+                        '            <td colspan="10"><a href="/sadmin/addGoods/" class="addtype">增加商品</a></td>\n' +
+                        '\n' +
+                        '        </tr>\n' +
+                        '        <tr>\n' +
+                        '            <th width="10%">id</th>\n' +
+                        '            <th width="10%">名称</th>\n' +
+                        '            <th width="10%">推荐</th>\n' +
+                        '            <th width="10%">价格</th>\n' +
+                        '            <th width="10%">库存</th>\n' +
+                        '            <th width="10%">销量</th>\n' +
+                        '            <th width="10%">上级分类</th>\n' +
+                        '            <th width="10%">评论</th>\n' +
+                        '            <th width="10%">销量</th>\n' +
+                        '            <th width="10%">管理操作</th>\n' +
+
+                        '        </tr>';
+                    for (var i = 0; i < len; i++) {
+                        html += ' <tr><td width="10%">' + mes[i]['id'] +
+                            '</td><td width="10%">' + mes[i]['name'] +
+                            '</td></td><td width="10%">' + mes[i]['is_recommend'] +
+                            '</td><td width="10%">' + mes[i]['price'] +
+                            '</td><td width="10%">' + mes[i]['stock'] +
+                            '</td><td width="10%">' + mes[i]['sales'] +
+                            '</td><td width="10%">' + mes[i]['cid'] +
+                            '</td><td width="10%">' + mes[i]['comment_time'] +
+                            '</td><td width="10%">' + mes[i]['top_id'] +
+                            '<td width="10%"><input type="button" value="修改" class="confirm" onclick="edit(' + mes[i]['id'] + ')">&nbsp<input type="button" value="删除" class="confirm" onclick="Delete(' + mes[i]['id'] + ')"></td></tr>'
+                    }
+                    $('.common_table').html(html)
+                }
+            }
+        })
+
+    }
+
+    function Delete(id) {
+        {#console.log(id);#}
+        if (id) {
+            console.log(id);
+            $.ajax({
+                url: '/sadmin/deleteGoods/',
+                type: 'post',
+                dataType: 'json',
+                data: {'id': id},
+                success: function (res) {
+                    console.log(res);
+                    window.location.reload()
+                }
+            })
+        }
+
+    }
+
+    function edit(id) {
+        {#console.log(id);#}
+        if (id) {
+            console.log(id);
+            window.location.href = '/sadmin/AddGoods/' + '?id=' + id
+        }
+
+    }
+</script>
+</html>

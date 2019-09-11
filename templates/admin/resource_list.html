@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>后台管理</title>
+    <link rel="stylesheet" type="text/css" href="../../static/admin/css/reset.css">
+    <link rel="stylesheet" type="text/css" href="../../static/admin/css/main.css">
+    <link rel="stylesheet" type="text/css" href='../../static/admin/css/jquery.pagination.css'>
+    <script type="text/javascript" src="../../static/admin/js/jquery-1.12.4.min.js"></script>
+    <script src="../../static/admin/js/jquery.pagination.min.js"></script>
+
+</head>
+<body>
+<div class="breadcrub">
+    当前位置：用户管理>资源管理>
+</div>
+<div class="pannel">
+    <table class="common_table">
+
+    </table>
+
+    <form id="form01" enctype="multipart/form-data">
+        <table class="common">
+
+        </table>
+    </form>
+</div>
+<div id="pagination">
+
+</div>
+</body>
+<script>
+    {#获取分类页内容#}
+    getCateList();
+
+    function getCateList() {
+        $.ajax({
+            url: '/sadmin/getresourseList/',
+            type: 'get',
+            dataType: 'json',
+            success: function (res) {
+                if (res.code === 200) {
+                    var mes = res.resource_list;
+                    var len = mes.length;
+                    var html = '        <tr>\n' +
+                        '            <td colspan="5"><a href="/sadmin/addResource/" class="addtype">资源管理</a></td>\n' +
+                        '\n' +
+                        '        </tr>\n' +
+                        '        <tr>\n' +
+                        '            <th width="10%">id</th>\n' +
+                        '            <th width="20%">名称</th>\n' +
+                        '            <th width="10%">是否启用</th>\n' +
+                        '            <th width="20%">url</th>\n' +
+                        '            <th width="20%">管理操作</th>\n' +
+                        '        </tr>';
+                    for (var i = 0; i < len; i++) {
+                        if (mes[i]['status'] == 0) {
+                            var m = '否'
+                        } else {
+                            var m = '是'
+                        }
+                        ;
+                        html += ' <tr><td width="20%">' + mes[i]['id']
+                            + '</td><td width="20%">' + mes[i]['name']
+                            + '</td>' + '</td><td width="20%">' + m
+                            + '</td><td width="20%">' + mes[i]['url'] +
+                            '<td width="20%"><input type="button" value="修改" class="confirm" onclick="edit(' + mes[i]['id'] + ')">&nbsp<input type="button" value="删除" class="confirm" onclick="Delete(' + mes[i]['id'] + ')"></td></tr>'
+                    }
+                    $('.common_table').html(html)
+                }
+            }
+        })
+
+    }
+
+
+    function Delete(id) {
+        {#console.log(id);#}
+        if (id) {
+            console.log(id);
+            $.ajax({
+                url: '/sadmin/deleteResource/',
+                type: 'post',
+                dataType: 'json',
+                data: {'id': id},
+                success: function (res) {
+                    console.log(res);
+                    window.location.reload()
+                }
+            })
+        }
+    }
+
+
+    function edit(id) {
+        console.log(id);
+        window.location.href = '/sadmin/addResource/' + '?id=' + id
+
+    }
+
+    function ok() {
+        $.ajax({
+            url: '/sadmin/editTag/',
+            type: 'post',
+            cache: false,
+            dataType: 'json',
+            processData: false,
+            contentType: false,
+            data: new FormData($("#form01")[0]),
+
+            success: function (res) {
+                console.log(res);
+                console.log(FormData);
+                if (res.code == 200) {
+                    window.location.reload()
+                }
+
+            }
+        })
+    }
+</script>
+</html>

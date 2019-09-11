@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>新经资讯后台管理</title>
+    <link rel="stylesheet" type="text/css" href="../../static/admin/css/reset.css">
+    <link rel="stylesheet" type="text/css" href="../../static/admin/css/main.css">
+    <script type="text/javascript" src="../../static/admin/js/jquery-1.12.4.min.js"></script>
+    <script src="../../static/admin/tinymce/js/tinymce/tinymce.min.js"></script>
+    <script src="../../static/admin/js/tinymce_setup.js"></script>
+    
+</head>
+<body>
+    <div class="breadcrub">
+            当前位置：新闻管理>新闻审核
+        </div>
+        <div class="pannel">
+            <form class="news_review">
+                
+            <h3 class="review_title">内容审核</h3>
+            <div class="form_group">
+                <label>新闻标题：</label>
+                <input type="text" class="input_txt2" value="{{news.title}}" readonly>
+            </div>
+            <div class="form_group">
+                    <label>新闻分类：</label>
+                    <div class="category_name">{{news.cate.name}}</div>
+            </div>
+            <div class="form_group">
+                <label>新闻摘要：</label>
+                <textarea class="input_multxt" readonly>{{news.descrip}}</textarea>
+            </div>
+            <div class="form_group">
+                <label>索引图片：</label>
+                <img src="{{news.image_url}}" alt="索引图片" class="index_pic">
+            </div>
+            <div class="form_group">
+                <label>新闻内容：</label>
+                <div class="rich_wrap fl">
+                    <input class="input_area" id="rich_content" value="{{news.content}}"></input>
+                </div>
+            </div>
+            <div class="form_group indent_group">
+               
+                <input type="radio" name="action" class='status' value="1" checked> 通过&nbsp;&nbsp;&nbsp;&nbsp;
+                <input type="radio" name="action" class='status' value="2" {% if news.status == 2 %} checked {% endif %}> 拒绝通过
+            </div>
+            
+                <div  class="form_group group_hide" {% if news.status == 2 %} style="display: block" {% endif %}>
+                    <label>拒绝原因：</label>
+                    <input class="input_multxt" name="reason"  id='reason' value="{{news.reason}}">
+                </div>
+               
+                </div>
+           
+
+
+            <input name='id' class='id' value="{{news.id}}" hidden>
+            <div class="form_group indent_group line_top">
+                <input type="button" value="确定" class="confirm">
+                <input type="button" value="取消" class="cancel" onclick="cancel()">
+            </div>
+
+            </form>    
+        </div>
+        
+        <script>
+        $(function(){
+            var $radio = $('input[name="action"]');
+            $radio.click(function(){
+                if($(this).index()==1)
+                {
+                    $('.group_hide').show();
+                }
+                else{
+                    $('.group_hide').hide();
+                }
+            });
+           $(".confirm").click(function(){
+               //获取新闻id ,状态，失败原因
+               var id = $(".id").val()
+               var status =$('.status:checked').val()
+              
+               var reason = $("#reason").val()
+               $.ajax({
+                   url:'/admin/review',
+                   type:'post',
+                   data:{'id':id,'status':status,'reason':reason},
+                   dataType:'json',
+                   success:function(res){
+                       if(res.code == 200){
+                           window.location.href="/admin/newsreview"
+                       }else{
+                           alert(res.message)
+                       }
+                   }
+               })
+           })
+        })
+    </script>    
+</body>
+</html>
